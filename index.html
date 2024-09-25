@@ -1,0 +1,201 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Página Principal de Arte</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            margin: 0;
+            padding: 0;
+            text-align: center;
+        }
+        nav {
+            background-color: rgb(18, 49, 224);
+            padding: 25px;
+            position: relative;
+        }
+        nav a {
+            color: white;
+            text-decoration: none;
+            margin-right: 20px;
+            font-size: 18px;
+        }
+        nav a:hover {
+            text-decoration: underline;
+        }
+        section {
+            padding: 20px;
+        }
+        h1 {
+            color: #FFD700;
+            margin-top: 50px;
+            font-size: 32px;
+        }
+        .avatar {
+            position: absolute;
+            top: 10px;
+            left: 15px;
+            width: 50px;
+            height: 50px;
+            border-radius: 50%;
+        }
+        .container {
+            background-color: white;
+            padding: 20px;
+            border-radius: 10px;
+            box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
+            width: 350px;
+            margin: 20px auto;
+        }
+        h2 {
+            text-align: center;
+        }
+        input[type="text"], textarea, select {
+            width: 100%;
+            padding: 10px;
+            margin: 10px 0;
+            border: 1px solid #ccc;
+            border-radius: 5px;
+        }
+        input[type="file"] {
+            margin: 10px 0;
+        }
+        input[type="submit"] {
+            width: 100%;
+            padding: 10px;
+            background-color: #4CAF50;
+            color: white;
+            border: none;
+            border-radius: 5px;
+            cursor: pointer;
+        }
+        input[type="submit"]:hover {
+            background-color: #45a049;
+        }
+        .profile {
+            display: none;
+            text-align: center;
+        }
+        img {
+            max-width: 100px;
+            margin: 10px 0;
+            border-radius: 5px;
+        }
+    </style>
+</head>
+<body>
+
+    <nav>
+        <img src="logmvn.png" alt="Avatar" class="avatar">
+        <a href="pintura.html">Pintura</a>
+        <a href="escultura.html">Escultura</a>
+        <a href="fotografia.html">Fotografía</a>
+        <a href="dibujo.html">Dibujo</a>
+    </nav>
+
+    <section>
+        <h1>Bienvenido a la Página de Artistas Villanovanos</h1>
+        <p>Esta página ha sido creada para promover a los artistas de Villa Nueva, brindándoles un espacio donde puedan compartir y mostrar su arte al mundo.</p>
+
+        <div class="container">
+            <h2>Perfil y Biografía</h2>
+            <form id="profileForm">
+                <label for="firstName">Nombre:</label>
+                <input type="text" id="firstName" name="firstName" required>
+
+                <label for="lastName">Apellidos:</label>
+                <input type="text" id="lastName" name="lastName" required>
+
+                <label for="description">Descripción:</label>
+                <textarea id="description" name="description" rows="4" placeholder="Describe un poco sobre ti..." required></textarea>
+
+                <label for="profilePic">Subir foto de perfil:</label>
+                <input type="file" id="profilePic" name="profilePic" accept="image/*" required>
+
+                <label for="artPic">Subir foto de tu arte:</label>
+                <input type="file" id="artPic" name="artPic" accept="image/*" required>
+
+                <!-- Selector de categoría -->
+                <label for="category">Selecciona categoría:</label>
+                <select id="category" name="category" required>
+                    <option value="pintura">Pintura</option>
+                    <option value="escultura">Escultura</option>
+                    <option value="fotografia">Fotografía</option>
+                    <option value="dibujo">Dibujo</option>
+                </select>
+
+                <input type="submit" value="Guardar y Mostrar">
+            </form>
+        </div>
+
+        <div class="container profile" id="profileDisplay">
+            <h2>Perfil Actualizado</h2>
+            <p><strong>Nombre:</strong> <span id="displayFirstName"></span></p>
+            <p><strong>Apellidos:</strong> <span id="displayLastName"></span></p>
+            <p><strong>Descripción:</strong></p>
+            <p id="displayDescription"></p>
+            <p><strong>Foto de perfil:</strong></p>
+            <img id="displayProfilePic" src="" alt="Foto de perfil">
+            <p><strong>Foto de tu arte:</strong></p>
+            <img id="displayArtPic" src="" alt="Foto de tu arte">
+        </div>
+    </section>
+
+    <script>
+        document.getElementById('profileForm').addEventListener('submit', function(event) {
+            event.preventDefault(); // Evitar la recarga de la página
+
+            // Obtener los valores del formulario
+            const firstName = document.getElementById('firstName').value;
+            const lastName = document.getElementById('lastName').value;
+            const description = document.getElementById('description').value;
+            const profilePic = document.getElementById('profilePic').files[0];
+            const artPic = document.getElementById('artPic').files[0];
+            const category = document.getElementById('category').value;
+
+            // Guardar los datos en localStorage
+            const readerProfilePic = new FileReader();
+            const readerArtPic = new FileReader();
+
+            readerProfilePic.onloadend = function() {
+                readerArtPic.onloadend = function() {
+                    // Obtener datos existentes o inicializar array
+                    const profiles = JSON.parse(localStorage.getItem(category)) || [];
+
+                    const userData = {
+                        firstName: firstName,
+                        lastName: lastName,
+                        description: description,
+                        profilePic: readerProfilePic.result,
+                        artPic: readerArtPic.result
+                    };
+                    
+                    profiles.push(userData);
+                    localStorage.setItem(category, JSON.stringify(profiles));
+                    alert("Datos guardados correctamente en la categoría: " + category);
+                    
+                    // Limpiar el formulario
+                    document.getElementById('profileForm').reset();
+
+                    // Mostrar el perfil actualizado
+                    displayProfile(userData);
+                };
+                readerArtPic.readAsDataURL(artPic);
+            };
+            readerProfilePic.readAsDataURL(profilePic);
+        });
+
+        function displayProfile(userData) {
+            document.getElementById('displayFirstName').innerText = userData.firstName;
+            document.getElementById('displayLastName').innerText = userData.lastName;
+            document.getElementById('displayDescription').innerText = userData.description;
+            document.getElementById('displayProfilePic').src = userData.profilePic;
+            document.getElementById('displayArtPic').src = userData.artPic;
+            document.getElementById('profileDisplay').style.display = 'block'; // Mostrar la sección del perfil
+        }
+    </script>
+
+</body>
+</html>

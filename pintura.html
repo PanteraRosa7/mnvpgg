@@ -1,0 +1,99 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Pintura</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            margin: 0;
+            padding: 0;
+            text-align: center; 
+        }
+        nav {
+            background-color: skyblue;
+            padding: 15px;
+        }
+        nav a {
+            color: white;
+            text-decoration: none;
+            margin-right: 20px;
+            font-size: 18px;
+        }
+        nav a:hover {
+            text-decoration: underline;
+        }
+        section {
+            padding: 20px;
+        }
+        h1 {
+            color: #FFD700; 
+            margin-top: 50px; 
+            font-size: 32px; 
+        }
+        .profile {
+            margin-top: 30px;
+            background-color: white;
+            padding: 20px;
+            border-radius: 10px;
+            box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
+            width: 350px;
+            margin: 20px auto;
+        }
+        .profile img {
+            max-width: 100px;
+            margin: 10px 0;
+            border-radius: 5px;
+        }
+    </style>
+</head>
+<body>
+
+    <nav>
+        <a href="index.html">Inicio</a>
+        <a href="pintura.html">Pintura</a>
+        <a href="escultura.html">Escultura</a>
+        <a href="fotografia.html">Fotografía</a>
+        <a href="dibujo.html">Dibujo</a>
+    </nav>
+
+    <section>
+        <h1>Pintura</h1>
+        <p>Aquí encontrarás información sobre la historia y técnicas de la pintura.</p>
+
+        <!-- Sección para mostrar los perfiles de artistas en pintura -->
+        <div id="profilesContainer"></div>
+    </section>
+
+    <script>
+        // Cargar datos de localStorage al cargar la página
+        document.addEventListener("DOMContentLoaded", function() {
+            const profiles = JSON.parse(localStorage.getItem("pintura")) || [];
+            const profilesContainer = document.getElementById('profilesContainer');
+
+            if (profiles.length > 0) {
+                profiles.forEach(userData => {
+                    const profileDiv = document.createElement('div');
+                    profileDiv.classList.add('profile');
+                    profileDiv.innerHTML = `
+                        <h2>Perfil de Artista</h2>
+                        <p><strong>Nombre:</strong> ${userData.firstName}</p>
+                        <p><strong>Apellidos:</strong> ${userData.lastName}</p>
+                        <p><strong>Descripción:</strong></p>
+                        <p>${userData.description}</p>
+                        <p><strong>Foto de perfil:</strong></p>
+                        <img src="${userData.profilePic}" alt="Foto de perfil">
+                        <p><strong>Foto de tu arte:</strong></p>
+                        <img src="${userData.artPic}" alt="Foto de tu arte">
+                    `;
+                    profilesContainer.appendChild(profileDiv);
+                });
+            } else {
+                profilesContainer.innerHTML = '<p>No hay perfiles de artistas en pintura disponibles.</p>';
+            }
+        });
+    </script>
+
+</body>
+</html>
